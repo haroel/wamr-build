@@ -63,9 +63,14 @@ Assert-Contains 'scripts/build_wamr_apple.sh' 'iphoneos'
 Assert-Contains 'scripts/build_wamr_apple.sh' 'iphonesimulator'
 Assert-Contains 'scripts/build_wamr_apple.sh' 'macosx'
 Assert-Contains 'scripts/build_wamr_apple.sh' 'xcodebuild -create-xcframework'
+Assert-Contains 'scripts/build_wamr_apple.sh' 'wamr.xcframework'
+Assert-Contains 'scripts/build_wamr_apple.sh' '${XCFRAMEWORK_PATH}/include'
 $appleBuildScript = Get-Content -LiteralPath (Join-Path $root 'scripts/build_wamr_apple.sh') -Raw
 if ($appleBuildScript.Contains('-d "${WAMR_ROOT}/.git"')) {
     throw 'scripts/build_wamr_apple.sh must not require the submodule .git path to be a directory'
+}
+if ($appleBuildScript.Contains('iwasm.xcframework')) {
+    throw 'scripts/build_wamr_apple.sh must generate wamr.xcframework, not iwasm.xcframework'
 }
 Assert-Contains 'scripts/build_wamr_apple.sh' 'git -C "${WAMR_ROOT}" rev-parse --is-inside-work-tree'
 Assert-NotExists 'scripts/build_wamr.bat'
@@ -75,10 +80,12 @@ Assert-Contains '.github/workflows/release-apple.yml' 'push:'
 Assert-Contains '.github/workflows/release-apple.yml' 'contents: write'
 Assert-Contains '.github/workflows/release-apple.yml' './scripts/build_wamr_apple.sh'
 Assert-Contains '.github/workflows/release-apple.yml' 'gh release create'
-Assert-Contains '.github/workflows/release-apple.yml' 'dist/apple/iwasm.xcframework.zip'
+Assert-Contains '.github/workflows/release-apple.yml' 'dist/apple/wamr.xcframework.zip'
 
 Assert-Contains 'docs/main.md' 'WAMR-2.4.4'
 Assert-Contains 'docs/main.md' 'Apple 平台'
 Assert-Contains 'docs/main.md' 'third_party/wasm-micro-runtime'
+Assert-Contains 'docs/main.md' 'wamr.xcframework'
+Assert-Contains 'docs/main.md' 'wamr.xcframework/include'
 
 Write-Output 'Repository validation passed.'

@@ -25,14 +25,14 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
-      - name: Build iwasm.xcframework
+      - name: Build wamr.xcframework
         run: bash ./scripts/build_wamr_apple.sh
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: iwasm-apple-xcframework-${{ github.sha }}
-          path: dist/apple/iwasm.xcframework.zip
+          name: wamr-apple-xcframework-${{ github.sha }}
+          path: dist/apple/wamr.xcframework.zip
           if-no-files-found: error
 
       - name: Publish GitHub release
@@ -51,7 +51,7 @@ jobs:
           fi
 
           gh release create "${release_tag}" \
-            "dist/apple/iwasm.xcframework.zip" \
+            "dist/apple/wamr.xcframework.zip" \
             --target "${GITHUB_SHA}" \
             --title "${release_title}" \
             --notes "Apple ARM64 XCFramework built from WAMR ${WAMR_TAG} for commit ${GITHUB_SHA}."

@@ -6,14 +6,16 @@
 
 最终产物是：
 
-- `dist/apple/iwasm.xcframework`
-- `dist/apple/iwasm.xcframework.zip`
+- `dist/apple/wamr.xcframework`
+- `dist/apple/wamr.xcframework.zip`
 
 XCFramework 包含三个 ARM64 slice：
 
 - iOS 真机：`arm64`
 - iOS 模拟器：`arm64`
 - macOS：`arm64`
+
+脚本会在 `wamr.xcframework/include` 额外放置一份公共头文件，便于宿主工程直接配置 Header Search Paths。各 slice 内仍保留 `xcodebuild -create-xcframework -headers` 生成的标准 Headers 信息。
 
 ## 构建模式
 
@@ -88,8 +90,8 @@ MACOS_DEPLOYMENT_TARGET=11.0
 每次构建会：
 
 1. checkout 仓库和子模块。
-2. 执行 `./scripts/build_wamr_apple.sh`。
-3. 上传 `dist/apple/iwasm.xcframework.zip` 为 artifact。
+2. 执行 `bash ./scripts/build_wamr_apple.sh`。
+3. 上传 `dist/apple/wamr.xcframework.zip` 为 artifact。
 4. 创建 GitHub Release，tag 格式为 `apple-wamr-<short-sha>`。
 
 发布 release 需要仓库 Actions 具备 `contents: write` 权限，工作流已显式声明。

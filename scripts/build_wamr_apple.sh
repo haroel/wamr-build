@@ -84,7 +84,7 @@ build_slice "ios-arm64" "iOS" "iphoneos" "${IOS_DEPLOYMENT_TARGET}"
 build_slice "ios-arm64-simulator" "iOS" "iphonesimulator" "${IOS_DEPLOYMENT_TARGET}"
 build_slice "macos-arm64" "Darwin" "macosx" "${MACOS_DEPLOYMENT_TARGET}"
 
-XCFRAMEWORK_PATH="${DIST_DIR}/iwasm.xcframework"
+XCFRAMEWORK_PATH="${DIST_DIR}/wamr.xcframework"
 rm -rf "${XCFRAMEWORK_PATH}"
 
 xcodebuild -create-xcframework \
@@ -96,7 +96,11 @@ xcodebuild -create-xcframework \
     -headers "${BUILD_ROOT}/install/macos-arm64/include" \
     -output "${XCFRAMEWORK_PATH}"
 
-ditto -c -k --keepParent "${XCFRAMEWORK_PATH}" "${DIST_DIR}/iwasm.xcframework.zip"
+rm -rf "${XCFRAMEWORK_PATH}/include"
+cmake -E copy_directory "${BUILD_ROOT}/install/ios-arm64/include" "${XCFRAMEWORK_PATH}/include"
+
+ditto -c -k --keepParent "${XCFRAMEWORK_PATH}" "${DIST_DIR}/wamr.xcframework.zip"
 
 echo "Built ${XCFRAMEWORK_PATH}"
-echo "Packaged ${DIST_DIR}/iwasm.xcframework.zip"
+echo "Headers copied to ${XCFRAMEWORK_PATH}/include"
+echo "Packaged ${DIST_DIR}/wamr.xcframework.zip"
