@@ -22,16 +22,20 @@ require_tool cmake
 require_tool xcodebuild
 require_tool xcrun
 
+is_wamr_checkout() {
+    git -C "${WAMR_ROOT}" rev-parse --is-inside-work-tree >/dev/null 2>&1
+}
+
 if [[ "$(uname -s)" != "Darwin" ]]; then
     echo "error: Apple XCFramework builds must run on macOS." >&2
     exit 1
 fi
 
-if [[ ! -d "${WAMR_ROOT}/.git" && -d "${ROOT_DIR}/.git" && "${WAMR_ROOT}" == "${ROOT_DIR}/${WAMR_SUBMODULE_PATH}" ]]; then
+if ! is_wamr_checkout && [[ "${WAMR_ROOT}" == "${ROOT_DIR}/${WAMR_SUBMODULE_PATH}" ]]; then
     git -C "${ROOT_DIR}" submodule update --init --recursive -- "${WAMR_SUBMODULE_PATH}"
 fi
 
-if [[ ! -d "${WAMR_ROOT}/.git" ]]; then
+if ! is_wamr_checkout; then
     echo "error: WAMR submodule is missing at ${WAMR_ROOT}" >&2
     exit 1
 fi

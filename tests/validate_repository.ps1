@@ -63,6 +63,11 @@ Assert-Contains 'scripts/build_wamr_apple.sh' 'iphoneos'
 Assert-Contains 'scripts/build_wamr_apple.sh' 'iphonesimulator'
 Assert-Contains 'scripts/build_wamr_apple.sh' 'macosx'
 Assert-Contains 'scripts/build_wamr_apple.sh' 'xcodebuild -create-xcframework'
+$appleBuildScript = Get-Content -LiteralPath (Join-Path $root 'scripts/build_wamr_apple.sh') -Raw
+if ($appleBuildScript.Contains('-d "${WAMR_ROOT}/.git"')) {
+    throw 'scripts/build_wamr_apple.sh must not require the submodule .git path to be a directory'
+}
+Assert-Contains 'scripts/build_wamr_apple.sh' 'git -C "${WAMR_ROOT}" rev-parse --is-inside-work-tree'
 Assert-NotExists 'scripts/build_wamr.bat'
 
 Assert-FileExists '.github/workflows/release-apple.yml'
