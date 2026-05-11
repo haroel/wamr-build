@@ -1,0 +1,57 @@
+name: Build Apple WAMR Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apple-wamr-release-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  release-apple:
+    name: Build and publish Apple XCFramework
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Build iwasm.xcframework
+        run: bash ./scripts/build_wamr_apple.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iwasm-apple-xcframework-${{ github.sha }}
+          path: dist/apple/iwasm.xcframework.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WAMR_TAG: WAMR-2.4.4
+        run: |
+          set -euo pipefail
+
+          short_sha="${GITHUB_SHA:0:12}"
+          release_tag="apple-wamr-${short_sha}"
+          release_title="Apple WAMR ${WAMR_TAG} (${short_sha})"
+
+          if gh release view "${release_tag}" >/dev/null 2>&1; then
+            gh release delete "${release_tag}" --yes --cleanup-tag
+          fi
+
+          gh release create "${release_tag}" \
+            "dist/apple/iwasm.xcframework.zip" \
+            --target "${GITHUB_SHA}" \
+            --title "${release_title}" \
+            --notes "Apple ARM64 XCFramework built from WAMR ${WAMR_TAG} for commit ${GITHUB_SHA}."
