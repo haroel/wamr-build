@@ -31,8 +31,8 @@ WAMR_BUILD_JIT=0
 WAMR_BUILD_FAST_JIT=0
 WAMR_BUILD_LIBC_BUILTIN=1
 WAMR_BUILD_LIBC_WASI=1
-WAMR_BUILD_LIB_PTHREAD=0
-WAMR_BUILD_LIB_WASI_THREADS=0
+WAMR_BUILD_LIB_PTHREAD=1
+WAMR_BUILD_LIB_WASI_THREADS=1
 WAMR_BUILD_SIMD=0
 WAMR_BUILD_DEBUG_INTERP=0
 WAMR_DISABLE_HW_BOUND_CHECK=1
@@ -41,6 +41,8 @@ WAMR_DISABLE_HW_BOUND_CHECK=1
 iOS 和 iOS 模拟器不启用 AOT、LLVM JIT、Fast JIT 或 Multi-tier JIT。
 
 Apple 平台包会禁用硬件 trap 边界检查，让 WAMR 使用软件边界检查，避免 iOS 运行时为每个 wasm 实例预留大块虚拟地址空间。
+
+Apple 平台包同时启用 WAMR 旧 `lib-pthread` 和新 `wasi-threads`，以覆盖 WAMR-specific pthread ABI 和 WASI threads ABI。启用线程库会由 WAMR 自动打开 thread manager、bulk memory 和 shared memory。
 
 ## fast interpreter 评估
 
