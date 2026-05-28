@@ -35,9 +35,12 @@ WAMR_BUILD_LIB_PTHREAD=0
 WAMR_BUILD_LIB_WASI_THREADS=0
 WAMR_BUILD_SIMD=0
 WAMR_BUILD_DEBUG_INTERP=0
+WAMR_DISABLE_HW_BOUND_CHECK=1
 ```
 
 iOS 和 iOS 模拟器不启用 AOT、LLVM JIT、Fast JIT 或 Multi-tier JIT。
+
+Apple 平台包会禁用硬件 trap 边界检查，让 WAMR 使用软件边界检查，避免 iOS 运行时为每个 wasm 实例预留大块虚拟地址空间。
 
 ## fast interpreter 评估
 
@@ -84,7 +87,7 @@ MACOS_DEPLOYMENT_TARGET=11.0
 
 触发方式：
 
-- push 到 `main`
+- push `apple*` tag
 - 手动 `workflow_dispatch`
 
 每次构建会：
@@ -92,7 +95,7 @@ MACOS_DEPLOYMENT_TARGET=11.0
 1. checkout 仓库和子模块。
 2. 执行 `bash ./scripts/build_wamr_apple.sh`。
 3. 上传 `dist/apple/wamr.xcframework.zip` 为 artifact。
-4. 创建 GitHub Release，tag 格式为 `apple-wamr-<short-sha>`。
+4. 创建 GitHub Release。tag 触发时复用触发 tag；main 分支触发时 tag 格式为 `apple<short-sha>`。
 
 发布 release 需要仓库 Actions 具备 `contents: write` 权限，工作流已显式声明。
 

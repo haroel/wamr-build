@@ -2,8 +2,8 @@ name: Build Apple WAMR Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'apple*'
   workflow_dispatch:
 
 permissions:
@@ -43,11 +43,15 @@ jobs:
           set -euo pipefail
 
           short_sha="${GITHUB_SHA:0:12}"
-          release_tag="apple-wamr-${short_sha}"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            release_tag="${GITHUB_REF_NAME}"
+          else
+            release_tag="apple${short_sha}"
+          fi
           release_title="Apple WAMR ${WAMR_TAG} (${short_sha})"
 
           if gh release view "${release_tag}" >/dev/null 2>&1; then
-            gh release delete "${release_tag}" --yes --cleanup-tag
+            gh release delete "${release_tag}" --yes
           fi
 
           gh release create "${release_tag}" \

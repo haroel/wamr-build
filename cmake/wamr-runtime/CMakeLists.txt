@@ -21,6 +21,7 @@ set(WAMR_BUILD_LIB_PTHREAD 0 CACHE BOOL "Disable WAMR pthread library" FORCE)
 set(WAMR_BUILD_LIB_WASI_THREADS 0 CACHE BOOL "Disable WAMR WASI threads library" FORCE)
 set(WAMR_BUILD_SIMD 0 CACHE BOOL "Disable SIMD in default Apple package" FORCE)
 set(WAMR_BUILD_DEBUG_INTERP 0 CACHE BOOL "Disable debug interpreter" FORCE)
+set(WAMR_DISABLE_HW_BOUND_CHECK 1 CACHE BOOL "Disable hardware-trap bounds checks on Apple package" FORCE)
 
 include("${WAMR_ROOT_DIR}/build-scripts/runtime_lib.cmake")
 
